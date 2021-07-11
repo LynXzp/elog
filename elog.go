@@ -1,46 +1,56 @@
 package elog
 
-import "fmt"
+import (
+	"log"
+)
 
 var minPrintableLevel int = 1
 
-// Set minimal logging level
+// SetLevel set minimal logging level
 // higher level means more important message
 // messages with smaller level will be ignored
-func SetLevel(level int){
+// Fatal messages always will be printed and Panic after
+func SetLevel(level int) {
 	minPrintableLevel = level
 }
 
-func IfErr(level int, err error){
+func Msg(level int, msg string) {
+	if minPrintableLevel > level {
+		return
+	}
+	log.Println(msg)
+}
+
+func IfErr(level int, err error) {
 	if minPrintableLevel > level {
 		return
 	}
 	if err != nil {
-		fmt.Printf("%v\n", err.Error())
+		log.Println(err)
 	}
 }
 
-func IfErrMsg(level int, err error, msg string){
+func IfErrMsg(level int, err error, msg string) {
 	if minPrintableLevel > level {
 		return
 	}
 	if err != nil {
-		fmt.Printf("%v: %v\n", msg, err.Error())
+		log.Println(msg, ":", err)
 	}
 }
 
-func IfErrPanic(err error){
+func IfErrFatal(err error) {
 	if err != nil {
-		str := fmt.Sprintf("%v\n", err.Error())
-		fmt.Print(str)
-		panic(str)
+		log.Fatal(err)
 	}
 }
 
-func IfErrMsgPanic(err error, msg string){
+func IfErrMsgFatal(err error, msg string) {
 	if err != nil {
-		str := fmt.Sprintf("%v: %v\n", msg, err.Error())
-		fmt.Print(str)
-		panic(str)
+		log.Fatal(msg, ":", err)
 	}
+}
+
+func Fatal(msg string) {
+	log.Fatal(msg)
 }
